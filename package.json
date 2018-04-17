@@ -1,0 +1,9 @@
+{
+  "name": "gh-notable-comments",
+  "version": "1.0.0",
+  "description": "Chrome extension that lets you jump to notable comments in issues",
+  "main": "index.js",
+  "repository": "github.com/kamranahmedse/gh-notable-comments",
+  "author": "Kamran Ahmed <kamranahmed.se@gmail.com>",
+  "license": "MIT"
+}
