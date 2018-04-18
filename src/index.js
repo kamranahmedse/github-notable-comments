@@ -66,8 +66,18 @@ function focusReactionComment(reactionKey, indexToSelect) {
     indexToSelect = reactionComments[reactionKey].length - 1;
   }
 
+  const commentElement = reactionComments[reactionKey][indexToSelect].element;
+
   reactionActiveIndexes[reactionKey] = indexToSelect;
-  reactionComments[reactionKey][indexToSelect].element.scrollIntoView();
+  commentElement.scrollIntoView();
+
+  const commentBody = commentElement.querySelector('.comment-body');
+  if (!commentBody) {
+    return;
+  }
+
+  commentBody.classList.remove('highlight-comment');
+  window.setTimeout(() => commentBody.classList.add('highlight-comment'));
 }
 
 function findAncestor(el, cls) {
@@ -180,7 +190,8 @@ function changeReactionSelection(reactionButton) {
 
   // Just reselect the already selected comment
   if (isAlreadySelected) {
-    focusReactionComment(reactionKey, reactionActiveIndexes[reactionKey]);
+    const indexToSelect = reactionActiveIndexes[reactionKey] < 0 ? 0 : reactionActiveIndexes[reactionKey];
+    focusReactionComment(reactionKey, indexToSelect);
     return;
   }
 
@@ -273,6 +284,3 @@ window.addEventListener('click', (e) => {
 
   updateAvailableCounter();
 });
-
-// const toFocus = thumbUpReactionElements[3];
-// findAncestor(toFocus, 'timeline-comment').scrollIntoView();
