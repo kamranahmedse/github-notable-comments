@@ -14,9 +14,12 @@
 }
 
 .ghnc-container .btn.ghnc-reaction {
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
   width: 100%;
   font-size: 24px;
-  border: none;
   background: none;
   padding: 10px;
   background: white;
@@ -28,27 +31,26 @@
   background-color: #e6ebf1;
   background-image: linear-gradient(-180deg, #f0f3f6 0%, #e6ebf1 90%);
   background-position: -.5em;
-  border-color: rgba(27, 31, 35, 0.35);
 }
 
 .ghnc-container .btn.ghnc-reaction g-emoji {
   margin-right: 0 !important;
 }
 
-.ghnc-container .btn.ghnc-reaction:first-child {
-  border-top: none !important;
-  border-radius: 3px 3px 0 0;
-}
-
-.ghnc-container .btn.ghnc-reaction:last-child {
-  border-bottom: none !important;
-  border-radius: 0 0 3px 3px;
-}
-
 .ghnc-container .btn.ghnc-selected-reaction {
   background: #f6f8fa;
   border-top: 1px solid #e1e4e8;
   border-bottom: 1px solid #e1e4e8;
+}
+
+.ghnc-container .ghnc-reaction-btns .btn.ghnc-reaction:first-child {
+  border-top: none !important;
+  border-radius: 3px 3px 0 0;
+}
+
+.ghnc-container .ghnc-reaction-btns .btn.ghnc-reaction:last-child {
+  border-bottom: none !important;
+  border-radius: 0 0 3px 3px;
 }
 
 .ghnc-container .btn.ghnc-action {
@@ -78,4 +80,12 @@
 
 .ghnc-footer span {
   display: block;
+}
+
+.ghnc-container .btn:disabled {
+  pointer-events: none;
+}
+
+.ghnc-action:disabled {
+  opacity: 0.5;
 }
