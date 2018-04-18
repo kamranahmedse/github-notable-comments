@@ -159,25 +159,24 @@ function updateButtonStatuses() {
 }
 
 function getReactionToSelect(element) {
-  let reactionButton = null;
-
   if (element.classList.contains('ghnc-reaction')) {
-    reactionButton = element;
-  } else if (element.parentElement && element.parentElement.classList.contains('ghnc-reaction')) {
-    reactionButton = element.parentElement;
+    return element
   }
 
-  // If reaction button is not there or is already selected
-  if (!reactionButton) {
-    return false;
-  }
-
-  return reactionButton;
+  return findAncestor(element, 'ghnc-reaction');
 }
 
-function changeReactionSelection(element) {
-  const isAlreadySelected = element.classList.contains('ghnc-selected-reaction');
-  const reactionKey = element.getAttribute('data-reaction');
+function getDirectionToMove(element) {
+  if (element.classList.contains('ghnc-action')) {
+    return element;
+  }
+
+  return findAncestor(element, 'ghnc-action');
+}
+
+function changeReactionSelection(reactionButton) {
+  const isAlreadySelected = reactionButton.classList.contains('ghnc-selected-reaction');
+  const reactionKey = reactionButton.getAttribute('data-reaction');
 
   // Just reselect the already selected comment
   if (isAlreadySelected) {
@@ -188,11 +187,20 @@ function changeReactionSelection(element) {
   // Remove selected reaction from before
   document.querySelector('.ghnc-selected-reaction').classList.remove('ghnc-selected-reaction');
   // Make current button selected
-  element.classList.add('ghnc-selected-reaction');
+  reactionButton.classList.add('ghnc-selected-reaction');
   // Reset the counter to 0
   resetIndexes();
   // Select the provided comment for the reaction
   focusReactionComment(reactionKey, reactionActiveIndexes[reactionKey] + 1);
+}
+
+function changeCommentSelection(directionButton) {
+  const directionKey = directionButton.getAttribute('data-direction');
+  const reactionKey = getSelectedReactionKey();
+
+  const indexToSelect = directionKey === 'next' ? reactionActiveIndexes[reactionKey] + 1 : reactionActiveIndexes[reactionKey] - 1;
+
+  focusReactionComment(reactionKey, indexToSelect);
 }
 
 function attachFilter() {
@@ -221,12 +229,12 @@ function attachFilter() {
         <g-emoji alias="thinking_face" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f615.png" class="emoji mr-1">😕</g-emoji>
       </button>
     </div>
-    <button class="btn ghnc-action ghnc-action-prev">
+    <button class="btn ghnc-action ghnc-action-prev" data-direction="previous">
       <svg height="16" width="8" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.5 3l1.5 1.5-3.75 3.5 3.75 3.5-1.5 1.5L0.5 8l5-5z" />
       </svg>
     </button>
-    <button class="btn ghnc-action ghnc-action-next">
+    <button class="btn ghnc-action ghnc-action-next" data-direction="next">
       <span class="right">
         <svg height="16" width="8" xmlns="http://www.w3.org/2000/svg">
           <path d="M7.5 8L2.5 13l-1.5-1.5 3.75-3.5L1 4.5l1.5-1.5 5 5z" />
@@ -254,9 +262,13 @@ if (getFirstComment()) {
 window.addEventListener('resize', positionFilter);
 window.addEventListener('click', (e) => {
   const reactionButton = getReactionToSelect(e.target);
-
   if (reactionButton) {
     changeReactionSelection(reactionButton);
+  }
+
+  const directionButton = getDirectionToMove(e.target);
+  if (directionButton) {
+    changeCommentSelection(directionButton);
   }
 
   updateAvailableCounter();
