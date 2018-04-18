@@ -17,6 +17,9 @@
       ],
       "js": [
         "index.js"
+      ],
+      "css": [
+        "style.css"
       ]
     }
   ]
