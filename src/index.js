@@ -1,27 +1,73 @@
 const reactionSelector = '.timeline-comment .reaction-summary-item.tooltipped';
-const reactionIndexes = {
-  'thumb_up': -1,
-  'thumb_down': -1,
-  'hooray': -1,
-  'heart': -1,
-  'laugh': -1,
-  'confused': -1,
-};
+const reactionsList = [
+  'any',
+  'thumbs_up',
+  'thumbs_down',
+  'hooray',
+  'heart',
+  'laugh',
+  'confused',
+];
 
-const reactionComments = {
-  'thumb_up': document.querySelectorAll(`${reactionSelector}[value="THUMBS_UP react"]`),
-  'thumb_down': document.querySelectorAll(`${reactionSelector}[value="THUMBS_DOWN react"]`),
-  'hooray': document.querySelectorAll(`${reactionSelector}[value="HOORAY react"]`),
-  'heart': document.querySelectorAll(`${reactionSelector}[value="HEART react"]`),
-  'laugh': document.querySelectorAll(`${reactionSelector}[value="LAUGH react"]`),
-  'confused': document.querySelectorAll(`${reactionSelector}[value="CONFUSED react"]`),
-};
+// Holds the currently focused reaction comment index
+const reactionActiveIndexes = {};
+// Holds the reaction comments in descending form
+const reactionComments = {};
+
+function prepareReactionsList() {
+  reactionsList.forEach((reactionKey) => {
+    const querySelector = reactionKey === 'any' ? `${reactionSelector}:first-child` : `${reactionSelector}[value^="${reactionKey.toUpperCase()}"]`;
+    reactionComments[reactionKey] = getReactionComments(querySelector);
+
+    reactionActiveIndexes[reactionKey] = -1;
+  });
+}
+
+// Gets the comments with this reaction in descending order
+function getReactionComments(querySelector) {
+  let commentElements = [];
+
+  document.querySelectorAll(querySelector)
+    .forEach(element => {
+      let reactionText = element.innerText;
+      reactionText = reactionText.replace(/\D+/, '');
+
+      if (!reactionText) {
+        return;
+      }
+
+      commentElements.push({
+        element: findAncestor(element, 'timeline-comment'),
+        count: parseInt(reactionText, 10)
+      });
+    });
+
+  commentElements = commentElements.sort((a, b) => b.count - a.count);
+
+  return commentElements;
+}
 
 function resetIndexes() {
-  Object.keys(reactionIndexes)
-    .forEach(reactionIndex => {
-      reactionIndexes[reactionIndex] = -1
-    });
+  reactionsList.forEach(reactionKey => {
+    reactionActiveIndexes[reactionKey] = -1
+  });
+}
+
+function focusReactionComment(reactionKey, indexToSelect) {
+  if (!reactionComments[reactionKey]) {
+    return;
+  }
+
+  // If given index goes out of the upper bound, select the first one
+  // If it goes below the lower bound, select the last one
+  if (indexToSelect > reactionComments[reactionKey].length - 1) {
+    indexToSelect = 0;
+  } else if (indexToSelect < 0) {
+    indexToSelect = reactionComments[reactionKey].length - 1;
+  }
+
+  reactionActiveIndexes[reactionKey] = indexToSelect;
+  reactionComments[reactionKey][indexToSelect].element.scrollIntoView();
 }
 
 function findAncestor(el, cls) {
@@ -83,7 +129,7 @@ function updateAvailableCounter() {
     return;
   }
 
-  footer.innerHTML = `${reactionIndexes[reactionKey] + 1} / ${reactionComments[reactionKey].length}`;
+  footer.innerHTML = `${reactionActiveIndexes[reactionKey] + 1} / ${reactionComments[reactionKey].length}`;
 }
 
 // Enables disables buttons
@@ -93,7 +139,8 @@ function updateButtonStatuses() {
   Object.keys(reactionComments)
     .forEach(reactionKey => {
       const reactionButton = document.querySelector(`.ghnc-reaction[data-reaction="${reactionKey}"]`);
-      if (reactionComments[reactionKey].length === 0) {
+      const hasReactionComments = reactionComments[reactionKey].length !== 0;
+      if (!hasReactionComments) {
         reactionButton.setAttribute('disabled', '1');
       } else {
         reactionButton.removeAttribute('disabled');
@@ -121,18 +168,41 @@ function getReactionToSelect(element) {
   }
 
   // If reaction button is not there or is already selected
-  if (!reactionButton || reactionButton.classList.contains('ghnc-selected-reaction')) {
+  if (!reactionButton) {
     return false;
   }
 
   return reactionButton;
 }
 
+function changeReactionSelection(element) {
+  const isAlreadySelected = element.classList.contains('ghnc-selected-reaction');
+  const reactionKey = element.getAttribute('data-reaction');
+
+  // Just reselect the already selected comment
+  if (isAlreadySelected) {
+    focusReactionComment(reactionKey, reactionActiveIndexes[reactionKey]);
+    return;
+  }
+
+  // Remove selected reaction from before
+  document.querySelector('.ghnc-selected-reaction').classList.remove('ghnc-selected-reaction');
+  // Make current button selected
+  element.classList.add('ghnc-selected-reaction');
+  // Reset the counter to 0
+  resetIndexes();
+  // Select the provided comment for the reaction
+  focusReactionComment(reactionKey, reactionActiveIndexes[reactionKey] + 1);
+}
+
 function attachFilter() {
   const reactionButtons = createNodeFromString(`
   <div class="ghnc-container">
     <div class="ghnc-reaction-btns">
-      <button class="btn ghnc-reaction ghnc-selected-reaction" data-reaction="thumb_up">
+      <button class="btn ghnc-reaction ghnc-selected-reaction" data-reaction="any">
+        🔥
+      </button>
+      <button class="btn ghnc-reaction" data-reaction="thumbs_up">
         <g-emoji alias="+1" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" class="emoji mr-1">👍</g-emoji>
       </button>
       <button class="btn ghnc-reaction" data-reaction="heart">
@@ -144,7 +214,7 @@ function attachFilter() {
       <button class="btn ghnc-reaction" data-reaction="laugh">
         <g-emoji alias="smile" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f604.png" class="emoji">😄</g-emoji>
       </button>
-      <button class="btn ghnc-reaction" data-reaction="thumb_down">
+      <button class="btn ghnc-reaction" data-reaction="thumbs_down">
         <g-emoji alias="-1" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44e.png" class="emoji mr-1">👎</g-emoji>
       </button>
       <button class="btn ghnc-reaction" data-reaction="confused">
@@ -177,6 +247,7 @@ function attachFilter() {
 }
 
 if (getFirstComment()) {
+  prepareReactionsList();
   attachFilter();
 }
 
@@ -185,12 +256,7 @@ window.addEventListener('click', (e) => {
   const reactionButton = getReactionToSelect(e.target);
 
   if (reactionButton) {
-    // Remove selected reaction from before
-    document.querySelector('.ghnc-selected-reaction').classList.remove('ghnc-selected-reaction');
-    // Make current button selected
-    reactionButton.classList.add('ghnc-selected-reaction');
-    // Reset the counter to 0
-    resetIndexes();
+    changeReactionSelection(reactionButton);
   }
 
   updateAvailableCounter();
