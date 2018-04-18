@@ -16,15 +16,50 @@ const reactionComments = {};
 
 function prepareReactionsList() {
   reactionsList.forEach((reactionKey) => {
-    const querySelector = reactionKey === 'any' ? `${reactionSelector}:first-child` : `${reactionSelector}[value^="${reactionKey.toUpperCase()}"]`;
-    reactionComments[reactionKey] = getReactionComments(querySelector);
+    if (reactionKey !== 'any') {
+      reactionComments[reactionKey] = getReactionComments(reactionKey);
+    } else {
+      reactionComments[reactionKey] = getAllReactedComments();
+    }
 
     reactionActiveIndexes[reactionKey] = -1;
   });
 }
 
+function getAllReactedComments() {
+  const reactedComments = document.querySelectorAll('.timeline-comment .comment-reactions-options');
+  let commentElements = [];
+
+  // For each of the comments, count number of reactions to each comment
+  reactedComments.forEach(reactedComment => {
+    const commentReaction = reactedComment.querySelectorAll('.reaction-summary-item');
+    let groupReactionCount = 0;
+
+    // Count the number of reactions against this comment
+    commentReaction.forEach(commentReaction => {
+      let reactionText = commentReaction.innerText;
+      reactionText = reactionText.replace(/\D+/, '');
+
+      groupReactionCount += parseInt(reactionText, 10);
+    });
+
+    if (!groupReactionCount) {
+      return;
+    }
+
+    commentElements.push({
+      element: findAncestor(reactedComment, 'timeline-comment'),
+      count: groupReactionCount
+    });
+  });
+
+  return commentElements.sort((a, b) => b.count - a.count);
+}
+
 // Gets the comments with this reaction in descending order
-function getReactionComments(querySelector) {
+function getReactionComments(reactionKey) {
+
+  const querySelector = `${reactionSelector}[value^="${reactionKey.toUpperCase()}"]`;
   let commentElements = [];
 
   document.querySelectorAll(querySelector)
@@ -42,9 +77,7 @@ function getReactionComments(querySelector) {
       });
     });
 
-  commentElements = commentElements.sort((a, b) => b.count - a.count);
-
-  return commentElements;
+  return commentElements.sort((a, b) => b.count - a.count);
 }
 
 function resetIndexes() {
