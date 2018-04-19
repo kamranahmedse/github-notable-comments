@@ -84,6 +84,7 @@
 
 .ghnc-container .btn:disabled {
   pointer-events: none;
+  display: none;
 }
 
 .ghnc-action:disabled {
@@ -91,8 +92,12 @@
 }
 
 @keyframes yellowfade {
-  from { background: yellow; }
-  to { background: transparent; }
+  from {
+    background: yellow;
+  }
+  to {
+    background: transparent;
+  }
 }
 
 .highlight-comment {
