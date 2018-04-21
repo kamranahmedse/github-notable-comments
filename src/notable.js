@@ -358,10 +358,8 @@ export class Notable {
 
       // Count the number of reactions against this comment
       commentReaction.forEach(commentReaction => {
-        let reactionText = commentReaction.innerText;
-        reactionText = reactionText.replace(/\D+/, '');
-
-        groupReactionCount += parseInt(reactionText, 10);
+        let reactionCountTextNode = commentReaction.childNodes[2].textContent;
+        groupReactionCount += parseInt(reactionCountTextNode, 10);
       });
 
       if (!groupReactionCount) {
