@@ -43,8 +43,7 @@ export class Notable {
     });
 
     window.addEventListener('DOMNodeInserted', (e) => {
-      const insertedElement = this.getInsertedDomElement(e.target);
-      if(insertedElement) {
+      if (this.shouldRefresh(e.target)) {
         this.refresh();
       }
     });
@@ -104,9 +103,9 @@ export class Notable {
     return findAncestor(clickedElement, CLASS_REACTION);
   }
 
-  getInsertedDomElement( mutatedElement) {
-    //Todo: determine which kind of changes is targeted
-    return mutatedElement;
+  shouldRefresh(mutatedElement) {
+    // Todo: determine the kind of mutation and decide if refresh is required or not
+    return true;
   }
 
   /**
@@ -370,8 +369,14 @@ export class Notable {
 
       // Count the number of reactions against this comment
       commentReaction.forEach(commentReaction => {
-        let reactionCountTextNode = commentReaction.childNodes[2].textContent;
-        groupReactionCount += parseInt(reactionCountTextNode, 10);
+        let reactionText = commentReaction.innerText;
+        reactionText = reactionText.replace(/\D+/, '');
+
+        if (!reactionText) {
+          return;
+        }
+
+        groupReactionCount += parseInt(reactionText, 10);
       });
 
       if (!groupReactionCount) {
