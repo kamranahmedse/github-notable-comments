@@ -12,7 +12,7 @@ Install it from the [Chrome Web Store](https://chrome.google.com/webstore/detail
 
 ## Why?
 
-<p>Saves you time when there is a large number of comments, lets you jump to the relevant section.<br>Just pick the 👍 or 🎉 and voila!</p>
+<p>Saves you time when there is a large number of comments, lets you jump to the relevant section.<br>Just pick the 👍 or 🎉  reaction and voila!</p>
 
 <img width="600" src="./assets/tweet.png" />
 
