@@ -42,6 +42,13 @@ export class Notable {
       this.refresh();
     });
 
+    window.addEventListener('DOMNodeInserted', (e) => {
+      const insertedElement = this.getInsertedDomElement(e.target);
+      if(insertedElement) {
+        this.refresh();
+      }
+    });
+
     window.addEventListener('click', (e) => {
       const reactionButton = this.getReactionToSelect(e.target);
       if (reactionButton) {
@@ -95,6 +102,11 @@ export class Notable {
     }
 
     return findAncestor(clickedElement, CLASS_REACTION);
+  }
+
+  getInsertedDomElement( mutatedElement) {
+    //Todo: determine which kind of changes is targeted
+    return mutatedElement;
   }
 
   /**
