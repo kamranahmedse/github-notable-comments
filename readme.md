@@ -2,7 +2,7 @@
 <img width="750" src="./assets/banner.png" text-align="center">
 </p>
 
-Adds a reaction navigator besides the issues and pull requests – pick a reaction and navigate through the comments with most of the selected reactions. Saves you some time when there is a large number of comments.
+Adds a reaction navigator beside the issues and pull requests – pick a reaction and navigate through the comments with most of the selected reactions. Saves you some time when there is a large number of comments.
 
 Install it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/github-notable-comments/jcppcdjgdbnibjdeeihllbefhpibmajf) or [manually](http://superuser.com/a/247654/6877).
 
