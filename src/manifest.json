@@ -19,7 +19,7 @@
         "index.js"
       ],
       "css": [
-        "style.css"
+        "./styles/main.css"
       ]
     }
   ]

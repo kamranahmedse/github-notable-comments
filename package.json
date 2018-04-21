@@ -1,9 +1,28 @@
 {
-  "name": "gh-notable-comments",
+  "name": "github-notable-comments",
   "version": "1.0.0",
-  "description": "Chrome extension that lets you jump to notable comments in issues",
-  "main": "index.js",
-  "repository": "github.com/kamranahmedse/gh-notable-comments",
+  "description": "Chrome Extension – Navigate through the most reacted comments in github issues",
+  "repository": "github.com/kamranahmedse/github-notable-comments",
   "author": "Kamran Ahmed <kamranahmed.se@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack --config webpack.config.js --watch",
+    "build": "NODE_ENV=production webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "copy-webpack-plugin": "^4.5.1",
+    "css-loader": "^0.28.11",
+    "extract-loader": "^2.0.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^1.1.11",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.14",
+    "webpack-dev-server": "^3.1.3"
+  }
 }

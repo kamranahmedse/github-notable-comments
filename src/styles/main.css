@@ -1,3 +1,4 @@
+/* @todo refactor */
 .ghnc-container {
   position: fixed;
   top: 383px;
@@ -100,7 +101,7 @@
   }
 }
 
-.highlight-comment {
+.ghnc-highlight-comment {
   animation-name: yellowfade;
   animation-duration: 1.5s;
 }
