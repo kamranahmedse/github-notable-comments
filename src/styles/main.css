@@ -8,6 +8,7 @@
   border: 1px solid #d1d5da;
   border-radius: 3px;
   width: 65px;
+  z-index: 100;
 }
 
 .ghnc-container .btn {
